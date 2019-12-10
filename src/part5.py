@@ -130,7 +130,12 @@ def predict_and_save(train_file, test_file, output_file):
     print("Running Viterbi algorithm...")
     predicted_dev_labels = []
     for feature_id in tqdm(dev_feature_ids):
-        pred = viterbi_2o(feature_id, transition_matrix, emission_matrix, len(emission_matrix))
+        try:
+            pred = viterbi_2o(feature_id, transition_matrix, emission_matrix, len(emission_matrix))
+        except:
+            print('Exception!')
+            predicted_dev_labels.append([])
+            continue
         predicted_dev_labels.append(pred)
 
     # Write predictions to file
