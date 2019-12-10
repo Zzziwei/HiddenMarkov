@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 from pathlib import Path
 import numpy as np
+from tqdm import tqdm
 
 from helpers import *
 
@@ -73,35 +75,26 @@ def predict_and_save(train_file, test_file, output_file):
     feature_ids, feature_map = encode_numeric(smoothed_features)
     label_ids, label_map = encode_numeric(labels)
 
-    # Get HMM model parameters
+    # Get emission matrix
     emission_matrix = get_emission_parameters(feature_ids, label_ids)
-    transition_matrix = get_transition_parameters(label_ids)
 
     # Load dev dataset, smooth and numerically encode it
     dev_features = load_dataset(test_file, split=False)
     smoothed_dev_features = smooth_dev(dev_features, smoothed_features)
     dev_feature_ids, _ = encode_numeric(smoothed_dev_features, token_map=feature_map)  # Make sure to reuse the same token map as the training set
 
-    # Run Viterbi algorithm to get most likely labels
-    predicted_dev_labels = []
-    for feature_id in dev_feature_ids:
-        pred = viterbi(feature_id, transition_matrix, emission_matrix)
-        predicted_dev_labels.append(pred)
+    # Get most likely labels
+    print("Predicting labels...")
+    predicted_dev_labels = [np.argmax(emission_matrix[:, feature_id], axis=0) for feature_id in tqdm(dev_feature_ids)]
     predicted_dev_labels = decode_numeric(predicted_dev_labels, label_map)
 
     # Write predictions to file
+    print("Writing to file...")
     with open(output_file, "w") as outfile:
         for dev_feature_sequence, predicted_dev_label_sequence in zip(dev_features, predicted_dev_labels):
             for dev_feature, predicted_dev_label in zip(dev_feature_sequence, predicted_dev_label_sequence):
                 print(dev_feature, predicted_dev_label, file=outfile)
             print(file=outfile)
-
-
-def write_part_2_dev_out(filename, predicted_word_symbol_sequence):
-    result_file = open(filename, "w", encoding="utf8")
-
-    for word_and_symbol in predicted_word_symbol_sequence:
-        result_file.write(' '.join(word_and_symbol) + "\n")
 
 
 if __name__ == "__main__":

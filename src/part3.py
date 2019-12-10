@@ -85,10 +85,7 @@ def predict_and_save(train_file, test_file, output_file):
 
     # Run Viterbi algorithm to get most likely labels
     print("Running Viterbi algorithm...")
-    predicted_dev_labels = []
-    for feature_id in tqdm(dev_feature_ids):
-        pred = viterbi(feature_id, log(transition_matrix), log(emission_matrix))
-        predicted_dev_labels.append(pred)
+    predicted_dev_labels = [viterbi(feature_id, log(transition_matrix), log(emission_matrix)) for feature_id in tqdm(dev_feature_ids)]
 
     # Write predictions to file
     print("Writing to file...")
