@@ -69,7 +69,9 @@ def smooth(inputs, thresh):
         thresh (bool): The minimum number of occurrences required for a word to not be replaced
     """
     inputs = list(inputs)
-    to_replace = {k for k, v in count(inputs, as_probability=False).items() if v < thresh}
+    to_replace = {
+        k for k, v in count(inputs, as_probability=False).items() if v < thresh
+    }
     return [["#UNK#" if x in to_replace else x for x in sub] for sub in inputs]
 
 
@@ -78,7 +80,10 @@ def smooth_dev(sequences, train_sequences):
     For each token in the given inputs, replace it with "#UNK#" if it doesn't appear in the training corpus.
     """
     train_sequences = unique(train_sequences, sort=False)
-    return [[x if x in train_sequences else "#UNK#" for x in sequence] for sequence in sequences]
+    return [
+        [x if x in train_sequences else "#UNK#" for x in sequence]
+        for sequence in sequences
+    ]
 
 
 def get_token_map(sequences):
@@ -93,8 +98,13 @@ def encode_numeric(sequences, token_map=None):
     """
     Encode a collection of token sequences as numerical values
     """
-    token_map = token_map or get_token_map(sequences)  # Compute token map if not provided
-    return [[token_map[token] for token in sequence] for sequence in sequences], token_map
+    token_map = token_map or get_token_map(
+        sequences
+    )  # Compute token map if not provided
+    return (
+        [[token_map[token] for token in sequence] for sequence in sequences],
+        token_map,
+    )
 
 
 def decode_numeric(sequences, token_map):

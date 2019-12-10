@@ -34,7 +34,7 @@ def get_predicted(predicted, answers=defaultdict(lambda: defaultdict(defaultdict
             continue
         else:
             split_line = line.split(separator)
-            #word = split_line[0]
+            # word = split_line[0]
             value = split_line[outputColumnIndex]
             ne = value[0]
             sent = value[2:]
@@ -42,7 +42,11 @@ def get_predicted(predicted, answers=defaultdict(lambda: defaultdict(defaultdict
             last_entity = []
 
             # check if it is start of entity
-            if ne == 'B' or (ne == 'I' and last_ne == 'O') or (last_ne != 'O' and ne == 'I' and last_sent != sent):
+            if (
+                ne == "B"
+                or (ne == "I" and last_ne == "O")
+                or (last_ne != "O" and ne == "I" and last_sent != sent)
+            ):
                 if entity:
                     last_entity = list(entity)
 
@@ -50,11 +54,11 @@ def get_predicted(predicted, answers=defaultdict(lambda: defaultdict(defaultdict
 
                 entity.append(word_index)
 
-            elif ne == 'I':
+            elif ne == "I":
                 entity.append(word_index)
 
-            elif ne == 'O':
-                if last_ne == 'B' or last_ne == 'I':
+            elif ne == "O":
+                if last_ne == "B" or last_ne == "I":
                     last_entity = list(entity)
                 entity = []
 
@@ -110,7 +114,11 @@ def get_observed(observed):
             last_entity = []
 
             # check if it is start of entity, suppose there is no weird case in gold data
-            if ne == 'B' or (ne == 'I' and last_ne == 'O') or (last_ne != 'O' and ne == 'I' and last_sent != sent):
+            if (
+                ne == "B"
+                or (ne == "I" and last_ne == "O")
+                or (last_ne != "O" and ne == "I" and last_sent != sent)
+            ):
                 if entity:
                     last_entity = entity
 
@@ -118,11 +126,11 @@ def get_observed(observed):
 
                 entity.append(word_index)
 
-            elif ne == 'I':
+            elif ne == "I":
                 entity.append(word_index)
 
-            elif ne == 'O':
-                if last_ne == 'B' or last_ne == 'I':
+            elif ne == "O":
+                if last_ne == "B" or last_ne == "I":
                     last_entity = entity
                 entity = []
 
@@ -139,6 +147,7 @@ def get_observed(observed):
 
     return observations
 
+
 # Print Results and deal with division by 0
 
 
@@ -147,10 +156,11 @@ def printResult(evalTarget, num_correct, prec, rec):
         f = 0
     else:
         f = 2 * prec * rec / (prec + rec)
-    print('#Correct', evalTarget, ':', num_correct)
-    print(evalTarget, ' precision: %.4f' % (prec))
-    print(evalTarget, ' recall: %.4f' % (rec))
-    print(evalTarget, ' F: %.4f' % (f))
+    print("#Correct", evalTarget, ":", num_correct)
+    print(evalTarget, " precision: %.4f" % (prec))
+    print(evalTarget, " recall: %.4f" % (rec))
+    print(evalTarget, " F: %.4f" % (f))
+
 
 # Compare results bewteen gold data and prediction data
 
@@ -196,33 +206,33 @@ def compare_observed_to_predicted(observed, predicted):
                         correct_sentiment += 1
 
     print()
-    print('#Entity in gold data: %d' % (total_observed))
-    print('#Entity in prediction: %d' % (total_predicted))
+    print("#Entity in gold data: %d" % (total_observed))
+    print("#Entity in prediction: %d" % (total_predicted))
     print()
 
-    prec = correct_entity/total_predicted
-    rec = correct_entity/total_observed
-    printResult('Entity', correct_entity, prec, rec)
+    prec = correct_entity / total_predicted
+    rec = correct_entity / total_observed
+    printResult("Entity", correct_entity, prec, rec)
     print()
 
-    prec = correct_sentiment/total_predicted
-    rec = correct_sentiment/total_observed
-    printResult('Sentiment', correct_sentiment, prec, rec)
+    prec = correct_sentiment / total_predicted
+    rec = correct_sentiment / total_observed
+    printResult("Sentiment", correct_sentiment, prec, rec)
 
 
 ##############Main Function##################
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print('Please make sure you have installed Python 3.4 or above!')
+        print("Please make sure you have installed Python 3.4 or above!")
         print("Usage on Windows:  python evalResult.py gold predictions")
         print("Usage on Linux/Mac:  python3 evalResult.py gold predictions")
         sys.exit()
 
-    gold = open(sys.argv[1], "r", encoding='UTF-8')
-    prediction = open(sys.argv[2], "r", encoding='UTF-8')
+    gold = open(sys.argv[1], "r", encoding="UTF-8")
+    prediction = open(sys.argv[2], "r", encoding="UTF-8")
 
     # column separator
-    separator = ' '
+    separator = " "
 
     # the column index for tags
     outputColumnIndex = 1
