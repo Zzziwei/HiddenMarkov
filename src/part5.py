@@ -148,13 +148,22 @@ def predict_and_save(train_file, test_file, output_file):
 
 
 if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) < 2:
+        print("Usage: python3 [dev | test]")
+        sys.exit()
+
+    assert sys.argv[1] in ["test", "dev"]
+    test_set_name = str(sys.argv[1])
+
     np.set_printoptions(formatter={"float": lambda x: f"{x:0.3f}"})
     DATA_ROOT = Path("data")
-    DATASETS = ["SG", "CN", "EN", "AL"]
+    DATASETS = ["EN", "AL"]
     for dataset in DATASETS:
         print(f"Dataset: {dataset}")
         predict_and_save(
             f"data/{dataset}/train",
-            f"data/{dataset}/dev.in",
-            f"data/{dataset}/dev.p5.out",
+            f"data/{dataset}/{test_set_name}.in",
+            f"data/{dataset}/{test_set_name}.p5.out",
         )
